@@ -1,0 +1,12 @@
+Flask
+spacy
+nltk
+scikit-learn
+PyPDF2
+pdfplumber
+python-docx
+docx2txt
+textstat
+reportlab
+python-dateutil
+regex

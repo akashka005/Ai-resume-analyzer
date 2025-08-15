@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Analysis Results</h1>
+
+        <div class="result-box">
+            <h2>1. Contact Info</h2>
+            <p><strong>Name:</strong> {{ results.contact.name }}</p>
+            <p><strong>Email:</strong> {{ results.contact.email }}</p>
+            <p><strong>Phone:</strong> {{ results.contact.phone }}</p>
+            <p><strong>LinkedIn:</strong> {{ results.contact.linkedin }}</p>
+            <p><strong>Missing fields:</strong> {{ results.contact.missing }}</p>
+        </div>
+
+        <div class="result-box">
+            <h2>2. Education</h2>
+            <p>Degrees found: </p>
+            <ul>
+                {% for d in results.education.degrees %}
+                    <li>{{ d.line }} {% if d.year %} ({{ d.year }}) {% endif %}</li>
+                {% endfor %}
+            </ul>
+            <p>Flags: {{ results.education.flags }}</p>
+        </div>
+
+        <div class="result-box">
+            <h2>3. Experience</h2>
+            <p>Positions parsed:</p>
+            <ul>
+            {% for p in results.experience.positions %}
+                <li>{{ p.raw }}</li>
+            {% endfor %}
+            </ul>
+            <p>Gaps: {{ results.experience.gaps }}</p>
+            <p>Action verb score: {{ results.experience.action_verb_score }}</p>
+            <p>Weak phrases: {{ results.experience.weak_phrases }}</p>
+        </div>
+
+        <div class="result-box">
+            <h2>4. Skills</h2>
+            <p><strong>Technical:</strong> {{ results.skills.technical }}</p>
+            <p><strong>Soft:</strong> {{ results.skills.soft }}</p>
+            <p><strong>Categories:</strong></p>
+            <ul>
+            {% for k,v in results.skills.categories.items() %}
+                <li><strong>{{ k }}:</strong> {{ v }}</li>
+            {% endfor %}
+            </ul>
+            <p><strong>Missing suggested skills:</strong> {{ results.skills.missing_skills_short }}</p>
+        </div>
+
+        <div class="result-box">
+            <h2>5. ATS Keyword Scoring</h2>
+            {% if results.ats.match_percent is not none %}
+                <p>Match Percent: {{ results.ats.match_percent }}%</p>
+                <p>Similarity (bag-of-words): {{ results.ats.similarity }}</p>
+                <p>Matched terms (sample): {{ results.ats.matched_terms[:20] }}</p>
+                <p>Missing terms (sample): {{ results.ats.missing_terms[:20] }}</p>
+            {% else %}
+                <p>No Job Description provided — ATS match skipped.</p>
+            {% endif %}
+        </div>
+
+        <div class="result-box">
+            <h2>6. Formatting & Readability</h2>
+            <p>Sections present: {{ results.format_check.sections_present }}</p>
+            <p>Warnings: {{ results.format_check.warnings }}</p>
+            <p>Flesch Reading Ease: {{ results.readability.flesch_reading_ease }}</p>
+        </div>
+
+        <div class="result-box">
+            <h2>7. AI Fit Score</h2>
+            <p>Final fit: <strong>{{ results.ai_fit.final_score }}%</strong></p>
+            <p>Breakdown: {{ results.ai_fit.breakdown }}</p>
+        </div>
+
+        <div class="result-box">
+            <h2>8. Rewrites & Optimizations</h2>
+            <p>Summary suggestion: {{ results.rewrites.summary_suggestion }}</p>
+            <ul>
+            {% for r in results.rewrites.experience_rewrites %}
+                <li><strong>Original:</strong> {{ r.original }}<br><strong>Suggested:</strong> {{ r.suggested }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        <div class="result-box">
+            <h2>9. Final Polished Resume</h2>
+            <p>Download optimized draft (DOCX): <a href="{{ url_for('download_file', filename=results.final_docx) }}">Download</a></p>
+        </div>
+
+        <div class="result-box">
+            <h2>10. BONUS</h2>
+            <h3>Cover Letter</h3>
+            <pre style="white-space:pre-wrap">{{ results.cover_letter }}</pre>
+            <h3>Skill Gap Resources</h3>
+            <ul>
+            {% for skill, links in results.resources.items() %}
+                <li>{{ skill }}:
+                    <ul>
+                    {% for link in links %}
+                        <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        <br>
+        <a href="/"><button>Analyze Another Resume</button></a>
+    </div>
+</body>
+</html>
